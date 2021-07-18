@@ -65,6 +65,57 @@ except:
 cursor.execute('SELECT * from students')
 data = cursor.fetchall()
 logging.info(data)
+'''
+6，更新数据
+'''
+sql = 'UPDATE students SET age = %s WHERE name = %s'
+try:
+    cursor.execute(sql,(10,'Echo'))
+    db.commit()
+except:
+    db.rollback()
+cursor.execute('SELECT * from students')
+data = cursor.fetchall()
+logging.info(data)
+
+data = {
+    'id':'20120094',
+    'name':'Bob',
+    'age':21
+
+}
+logging.info('+ id +')
+table = 'students'
+keys = ','.join(data.keys())
+values = ','.join(['%s'] * len(data))
+sql = f'INSERT INTO {table}({keys}) VALUES ({values}) ON DUPLICATE KEY UPDATE'.format(table=table,keys=keys,values=values)
+update = ','.join([f' {key}=%s'.format(key=key) for key in data])
+sql += update
+logging.info(sql)
+logging.info(tuple(data.values())*2)
+try:
+    if cursor.execute(sql,tuple(data.values())*2):
+        logging.info('successful')
+        db.commit()
+except:
+    db.rollback()
+
+'''
+7,删除数据
+'''
+table = 'students'
+condition = 'age > 20'
+sql = 'DELETE FROM {table} WHERE {condition}'.format(table=table,condition=condition)
+try:
+    cursor.execute(sql)
+    db.commit()
+except:
+    db.rollback()
+
+'''
+8,查询数据
+'''
+
 
 db.close()
 
